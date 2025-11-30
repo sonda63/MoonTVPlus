@@ -328,8 +328,10 @@ function PlayPageClient() {
     console.log('播放源评分排序结果:');
     resultsWithScore.forEach((result, index) => {
       console.log(
-        `${index + 1}. ${result.source.source_name
-        } - 评分: ${result.score.toFixed(2)} (${result.testResult.quality}, ${result.testResult.loadSpeed
+        `${index + 1}. ${
+          result.source.source_name
+        } - 评分: ${result.score.toFixed(2)} (${result.testResult.quality}, ${
+          result.testResult.loadSpeed
         }, ${result.testResult.pingTime}ms)`
       );
     });
@@ -493,42 +495,42 @@ function PlayPageClient() {
     }
   };
 
-  function filterAdsFromM3U8(type : string,m3u8Content: string): string {
+  function filterAdsFromM3U8(type: string, m3u8Content: string): string {
     if (!m3u8Content) return '';
 
     // 按行分割M3U8内容
     const lines = m3u8Content.split('\n');
     const filteredLines = [];
 
-    let nextdelete = false
+    let nextdelete = false;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
 
-        if (nextdelete){
-          nextdelete = false
-          continue
-        }
+      if (nextdelete) {
+        nextdelete = false;
+        continue;
+      }
 
       // 只过滤#EXT-X-DISCONTINUITY标识
       if (!line.includes('#EXT-X-DISCONTINUITY')) {
-
-        if (type == "ruyi" && (
-            line.includes('EXTINF:5.640000') ||
+        if (
+          type == 'ruyi' &&
+          (line.includes('EXTINF:5.640000') ||
             line.includes('EXTINF:2.960000') ||
             line.includes('EXTINF:3.480000') ||
             line.includes('EXTINF:4.000000') ||
             line.includes('EXTINF:0.960000') ||
             line.includes('EXTINF:10.000000') ||
-            line.includes('EXTINF:1.266667')
-        )){
-          nextdelete = true
-          continue
+            line.includes('EXTINF:1.266667'))
+        ) {
+          nextdelete = true;
+          continue;
         }
 
         filteredLines.push(line);
       }
     }
-   
+
     return filteredLines.join('\n');
   }
 
@@ -653,7 +655,10 @@ function PlayPageClient() {
             // 如果是m3u8文件，处理内容以移除广告分段
             if (response.data && typeof response.data === 'string') {
               // 过滤掉广告段 - 实现更精确的广告过滤逻辑
-              response.data = filterAdsFromM3U8(currentSourceRef.current,response.data);
+              response.data = filterAdsFromM3U8(
+                currentSourceRef.current,
+                response.data
+              );
             }
             return onSuccess(response, stats, context, null);
           };
@@ -707,13 +712,13 @@ function PlayPageClient() {
         const results = data.results.filter(
           (result: SearchResult) =>
             result.title.replaceAll(' ', '').toLowerCase() ===
-            videoTitleRef.current.replaceAll(' ', '').toLowerCase() &&
+              videoTitleRef.current.replaceAll(' ', '').toLowerCase() &&
             (videoYearRef.current
               ? result.year.toLowerCase() === videoYearRef.current.toLowerCase()
               : true) &&
             (searchType
               ? (searchType === 'tv' && result.episodes.length > 1) ||
-              (searchType === 'movie' && result.episodes.length === 1)
+                (searchType === 'movie' && result.episodes.length === 1)
               : true)
         );
         setAvailableSources(results);
@@ -1283,8 +1288,9 @@ function PlayPageClient() {
     // 非WebKit浏览器且播放器已存在，使用switch方法切换
     if (!isWebkit && artPlayerRef.current) {
       artPlayerRef.current.switch = videoUrl;
-      artPlayerRef.current.title = `${videoTitle} - 第${currentEpisodeIndex + 1
-        }集`;
+      artPlayerRef.current.title = `${videoTitle} - 第${
+        currentEpisodeIndex + 1
+      }集`;
       artPlayerRef.current.poster = videoCover;
       if (artPlayerRef.current?.video) {
         ensureVideoSource(
@@ -1610,7 +1616,7 @@ function PlayPageClient() {
           skipConfigRef.current.outro_time < 0 &&
           duration > 0 &&
           currentTime >
-          artPlayerRef.current.duration + skipConfigRef.current.outro_time
+            artPlayerRef.current.duration + skipConfigRef.current.outro_time
         ) {
           if (
             currentEpisodeIndexRef.current <
@@ -1724,27 +1730,30 @@ function PlayPageClient() {
             <div className='mb-6 w-80 mx-auto'>
               <div className='flex justify-center space-x-2 mb-4'>
                 <div
-                  className={`w-3 h-3 rounded-full transition-all duration-500 ${loadingStage === 'searching' || loadingStage === 'fetching'
-                    ? 'bg-green-500 scale-125'
-                    : loadingStage === 'preferring' ||
-                      loadingStage === 'ready'
+                  className={`w-3 h-3 rounded-full transition-all duration-500 ${
+                    loadingStage === 'searching' || loadingStage === 'fetching'
+                      ? 'bg-green-500 scale-125'
+                      : loadingStage === 'preferring' ||
+                        loadingStage === 'ready'
                       ? 'bg-green-500'
                       : 'bg-gray-300'
-                    }`}
+                  }`}
                 ></div>
                 <div
-                  className={`w-3 h-3 rounded-full transition-all duration-500 ${loadingStage === 'preferring'
-                    ? 'bg-green-500 scale-125'
-                    : loadingStage === 'ready'
+                  className={`w-3 h-3 rounded-full transition-all duration-500 ${
+                    loadingStage === 'preferring'
+                      ? 'bg-green-500 scale-125'
+                      : loadingStage === 'ready'
                       ? 'bg-green-500'
                       : 'bg-gray-300'
-                    }`}
+                  }`}
                 ></div>
                 <div
-                  className={`w-3 h-3 rounded-full transition-all duration-500 ${loadingStage === 'ready'
-                    ? 'bg-green-500 scale-125'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`w-3 h-3 rounded-full transition-all duration-500 ${
+                    loadingStage === 'ready'
+                      ? 'bg-green-500 scale-125'
+                      : 'bg-gray-300'
+                  }`}
                 ></div>
               </div>
 
@@ -1755,11 +1764,11 @@ function PlayPageClient() {
                   style={{
                     width:
                       loadingStage === 'searching' ||
-                        loadingStage === 'fetching'
+                      loadingStage === 'fetching'
                         ? '33%'
                         : loadingStage === 'preferring'
-                          ? '66%'
-                          : '100%',
+                        ? '66%'
+                        : '100%',
                   }}
                 ></div>
               </div>
@@ -1854,7 +1863,10 @@ function PlayPageClient() {
             {videoTitle || '影片标题'}
             {totalEpisodes > 1 && (
               <span className='text-gray-500 dark:text-gray-400'>
-                {` > ${detail?.episodes_titles?.[currentEpisodeIndex] || `第 ${currentEpisodeIndex + 1} 集`}`}
+                {` > ${
+                  detail?.episodes_titles?.[currentEpisodeIndex] ||
+                  `第 ${currentEpisodeIndex + 1} 集`
+                }`}
               </span>
             )}
           </h1>
@@ -1873,8 +1885,9 @@ function PlayPageClient() {
               }
             >
               <svg
-                className={`w-3.5 h-3.5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isEpisodeSelectorCollapsed ? 'rotate-180' : 'rotate-0'
-                  }`}
+                className={`w-3.5 h-3.5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
+                  isEpisodeSelectorCollapsed ? 'rotate-180' : 'rotate-0'
+                }`}
                 fill='none'
                 stroke='currentColor'
                 viewBox='0 0 24 24'
@@ -1892,26 +1905,30 @@ function PlayPageClient() {
 
               {/* 精致的状态指示点 */}
               <div
-                className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full transition-all duration-200 ${isEpisodeSelectorCollapsed
-                  ? 'bg-orange-400 animate-pulse'
-                  : 'bg-green-400'
-                  }`}
+                className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full transition-all duration-200 ${
+                  isEpisodeSelectorCollapsed
+                    ? 'bg-orange-400 animate-pulse'
+                    : 'bg-green-400'
+                }`}
               ></div>
             </button>
           </div>
 
           <div
-            className={`grid gap-4 lg:h-[500px] xl:h-[650px] 2xl:h-[750px] transition-all duration-300 ease-in-out ${isEpisodeSelectorCollapsed
-              ? 'grid-cols-1'
-              : 'grid-cols-1 md:grid-cols-4'
-              }`}
+            className={`grid gap-4 lg:h-[500px] xl:h-[650px] 2xl:h-[750px] transition-all duration-300 ease-in-out ${
+              isEpisodeSelectorCollapsed
+                ? 'grid-cols-1'
+                : 'grid-cols-1 md:grid-cols-4'
+            }`}
           >
             {/* 播放器 */}
             <div
-              className={`h-full transition-all duration-300 ease-in-out rounded-xl border border-white/0 dark:border-white/30 ${isEpisodeSelectorCollapsed ? 'col-span-1' : 'md:col-span-3'
-                }`}
+              className={`transition-all duration-300 ease-in-out rounded-xl border border-white/0 dark:border-white/30 flex flex-col ${
+                isEpisodeSelectorCollapsed ? 'col-span-1' : 'md:col-span-3'
+              }`}
             >
-              <div className='relative w-full h-[300px] lg:h-full'>
+              {/* 播放器容器 */}
+              <div className='relative w-full h-[300px] lg:flex-1 lg:min-h-0'>
                 <div
                   ref={artRef}
                   className='bg-black w-full h-full rounded-xl overflow-hidden shadow-lg'
@@ -1955,14 +1972,151 @@ function PlayPageClient() {
                   </div>
                 )}
               </div>
+
+              {/* 第三方应用打开按钮 */}
+              {videoUrl && (
+                <div className='mt-3 px-2 lg:flex-shrink-0 flex justify-end'>
+                  <div className='bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg p-2 border border-gray-200/50 dark:border-gray-700/50 w-auto'>
+                    <div className='flex flex-wrap gap-1.5 justify-end'>
+                      {/* PotPlayer */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(`potplayer://${videoUrl}`, '_blank');
+                        }}
+                        className='group relative flex items-center gap-1 px-2 py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600'
+                        title='PotPlayer'
+                      >
+                        <img
+                          src='/players/potplayer.png'
+                          alt='PotPlayer'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          PotPlayer
+                        </span>
+                      </button>
+
+                      {/* VLC */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(`vlc://${videoUrl}`, '_blank');
+                        }}
+                        className='group relative flex items-center gap-1 px-2 py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600'
+                        title='VLC'
+                      >
+                        <img
+                          src='/players/vlc.png'
+                          alt='VLC'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          VLC
+                        </span>
+                      </button>
+
+                      {/* MPV */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(`mpv://${videoUrl}`, '_blank');
+                        }}
+                        className='group relative flex items-center gap-1 px-2 py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600'
+                        title='MPV'
+                      >
+                        <img
+                          src='/players/mpv.png'
+                          alt='MPV'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          MPV
+                        </span>
+                      </button>
+
+                      {/* MX Player */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `intent://${videoUrl.replace(
+                              /^https?:\/\//,
+                              ''
+                            )}#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURIComponent(
+                              videoTitle
+                            )};end`,
+                            '_blank'
+                          );
+                        }}
+                        className='group relative flex items-center gap-1 px-2 py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600'
+                        title='MX Player'
+                      >
+                        <img
+                          src='/players/mxplayer.png'
+                          alt='MX Player'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          MX Player
+                        </span>
+                      </button>
+
+                      {/* nPlayer */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(`nplayer-${videoUrl}`, '_blank');
+                        }}
+                        className='group relative flex items-center gap-1 px-2 py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600'
+                        title='nPlayer'
+                      >
+                        <img
+                          src='/players/nplayer.png'
+                          alt='nPlayer'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          nPlayer
+                        </span>
+                      </button>
+
+                      {/* IINA */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `iina://weblink?url=${encodeURIComponent(
+                              videoUrl
+                            )}`,
+                            '_blank'
+                          );
+                        }}
+                        className='group relative flex items-center gap-1 px-2 py-1.5 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-gray-300 dark:border-gray-600'
+                        title='IINA'
+                      >
+                        <img
+                          src='/players/iina.png'
+                          alt='IINA'
+                          className='w-4 h-4 flex-shrink-0'
+                        />
+                        <span className='max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-gray-700 dark:text-gray-200'>
+                          IINA
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* 选集和换源 - 在移动端始终显示，在 lg 及以上可折叠 */}
             <div
-              className={`h-[300px] lg:h-full md:overflow-hidden transition-all duration-300 ease-in-out ${isEpisodeSelectorCollapsed
-                ? 'md:col-span-1 lg:hidden lg:opacity-0 lg:scale-95'
-                : 'md:col-span-1 lg:opacity-100 lg:scale-100'
-                }`}
+              className={`h-[300px] lg:h-full md:overflow-hidden transition-all duration-300 ease-in-out ${
+                isEpisodeSelectorCollapsed
+                  ? 'md:col-span-1 lg:hidden lg:opacity-0 lg:scale-95'
+                  : 'md:col-span-1 lg:opacity-100 lg:scale-100'
+              }`}
             >
               <EpisodeSelector
                 totalEpisodes={totalEpisodes}
