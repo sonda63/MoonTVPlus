@@ -8,6 +8,7 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { usePlaySync } from '@/hooks/usePlaySync';
 import { getDoubanDetail } from '@/lib/douban.client';
+import { useDownload } from '@/contexts/DownloadContext';
 
 import {
   deleteFavorite,
@@ -64,6 +65,7 @@ function PlayPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const enableComments = useEnableComments();
+  const { addDownloadTask } = useDownload();
 
   // 获取 Proxy M3U8 Token
   const proxyToken = typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_PROXY_M3U8_TOKEN || '' : '';
@@ -3577,7 +3579,7 @@ function PlayPageClient() {
                       <div className='flex gap-1.5 lg:flex-wrap'>
                         {/* 下载按钮 */}
                         <button
-                          onClick={(e) => {
+                          onClick={async (e) => {
                             e.preventDefault();
                             // 使用代理 URL
                             const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
@@ -3587,18 +3589,19 @@ function PlayPageClient() {
                             const isM3u8 = videoUrl.toLowerCase().includes('.m3u8') || videoUrl.toLowerCase().includes('/m3u8/');
 
                             if (isM3u8) {
-                              // M3U8格式 - 复制链接并提示
-                              navigator.clipboard.writeText(proxyUrl).then(() => {
+                              // M3U8格式 - 使用新的下载器，TS 格式
+                              try {
+                                const downloadTitle = `${videoTitle}_第${currentEpisodeIndex + 1}集`;
+                                await addDownloadTask(proxyUrl, downloadTitle, 'TS');
                                 if (artPlayerRef.current) {
-                                  artPlayerRef.current.notice.show = externalPlayerAdBlock
-                                    ? '代理链接已复制(含去广告)！请使用 FFmpeg、N_m3u8DL-CLI 或 Downie 等工具下载'
-                                    : '链接已复制！请使用 FFmpeg、N_m3u8DL-CLI 或 Downie 等工具下载';
+                                  artPlayerRef.current.notice.show = '已添加到下载队列！下载完成后可重命名为 .mp4';
                                 }
-                              }).catch(() => {
+                              } catch (error) {
+                                console.error('添加下载任务失败:', error);
                                 if (artPlayerRef.current) {
-                                  artPlayerRef.current.notice.show = '复制失败，请手动复制链接';
+                                  artPlayerRef.current.notice.show = '添加下载失败，请重试';
                                 }
-                              });
+                              }
                             } else {
                               // 普通视频格式 - 直接下载
                               const a = document.createElement('a');
@@ -3632,6 +3635,48 @@ function PlayPageClient() {
                           </svg>
                           <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-white'>
                             下载
+                          </span>
+                        </button>
+
+                        {/* IDM 下载按钮 */}
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            // 使用代理 URL
+                            const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
+                            const proxyUrl = externalPlayerAdBlock
+                              ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}${tokenParam}`
+                              : videoUrl;
+
+                            // 复制链接到剪贴板
+                            navigator.clipboard.writeText(proxyUrl).then(() => {
+                              if (artPlayerRef.current) {
+                                artPlayerRef.current.notice.show = '链接已复制！请在 IDM 中粘贴下载';
+                              }
+                            }).catch(() => {
+                              if (artPlayerRef.current) {
+                                artPlayerRef.current.notice.show = '复制失败，请手动复制链接';
+                              }
+                            });
+                          }}
+                          className='group relative flex items-center justify-center gap-1 w-8 h-8 lg:w-auto lg:h-auto lg:px-2 lg:py-1.5 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-xs font-medium rounded-md transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer overflow-hidden border border-orange-400 flex-shrink-0'
+                          title='IDM 下载'
+                        >
+                          <svg
+                            className='w-4 h-4 flex-shrink-0 text-white'
+                            fill='none'
+                            stroke='currentColor'
+                            viewBox='0 0 24 24'
+                          >
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth='2'
+                              d='M13 10V3L4 14h7v7l9-11h-7z'
+                            />
+                          </svg>
+                          <span className='hidden lg:inline max-w-0 group-hover:max-w-[100px] overflow-hidden whitespace-nowrap transition-all duration-200 ease-in-out text-white'>
+                            IDM
                           </span>
                         </button>
 

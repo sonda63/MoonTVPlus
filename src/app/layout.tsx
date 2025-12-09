@@ -12,6 +12,9 @@ import { SiteProvider } from '../components/SiteProvider';
 import { ThemeProvider } from '../components/ThemeProvider';
 import { WatchRoomProvider } from '../components/WatchRoomProvider';
 import ChatFloatingWindow from '../components/watch-room/ChatFloatingWindow';
+import { DownloadProvider } from '../contexts/DownloadContext';
+import { DownloadBubble } from '../components/DownloadBubble';
+import { DownloadPanel } from '../components/DownloadPanel';
 
 const inter = Inter({ subsets: ['latin'] });
 export const dynamic = 'force-dynamic';
@@ -124,9 +127,13 @@ export default async function RootLayout({
         >
           <SiteProvider siteName={siteName} announcement={announcement}>
             <WatchRoomProvider>
-              {children}
-              <GlobalErrorIndicator />
-              <ChatFloatingWindow />
+              <DownloadProvider>
+                {children}
+                <GlobalErrorIndicator />
+                <ChatFloatingWindow />
+                <DownloadBubble />
+                <DownloadPanel />
+              </DownloadProvider>
             </WatchRoomProvider>
           </SiteProvider>
         </ThemeProvider>
